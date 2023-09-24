@@ -1,0 +1,10 @@
+network:
+  port: 8080
+  proxy-url: socks5://127.0.0.1:7890
+external-service:
+  google-custom-search:
+      api-key: ENC(4NENKkiWYYSEU5dRO+O/jBjgoCTkcjgBZtZ1ce5V/pAd7V7zRjzXVnavoIQvNko+)
+      engine-id:
+        entire: f18c2db8bf8be424d
+        wikipedia: 9614938ae8c634af8
+        music-platform: 30be9fbaf45414c67
