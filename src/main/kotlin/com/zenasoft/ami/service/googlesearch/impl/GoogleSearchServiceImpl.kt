@@ -52,4 +52,41 @@ class GoogleSearchServiceImpl : KoinComponent, IGoogleSearchService {
         return result
     }
 
+    override suspend fun searchIntegrated(
+        query: String,
+        mainEngineEnums: List<SearchEngineEnum>,
+        restEngineEnum: SearchEngineEnum?,
+    ): Map<SearchEngineEnum, SearchResult> {
+        if (mainEngineEnums.isEmpty()) {
+            throw AmiException.of(
+                AmiErrorCode.AMI_S001_001,
+                "`mainEngineEnums` is empty"
+            )
+        }
+
+        // Search all the engines and dedup.
+        // All results from the main engines are preserved.
+        // The results from the rest engine are deduped and unique.
+        val urls = mutableSetOf<String>();
+        val resultMap = mutableMapOf<SearchEngineEnum, SearchResult>()
+        mainEngineEnums.forEach { engineEnum ->
+            val searchResult = search(query, engineEnum)
+            searchResult.results.forEach {
+                urls.add(it.url)
+            }
+            resultMap[engineEnum] = searchResult
+        }
+
+        if (restEngineEnum != null) {
+            val searchResult = search(query, restEngineEnum)
+            val deduppedUrls = searchResult.results.filter {
+                !urls.contains(it.url)
+            }.toList()
+            searchResult.results = deduppedUrls
+            resultMap[restEngineEnum] = searchResult
+        }
+
+        return resultMap
+    }
+
 }

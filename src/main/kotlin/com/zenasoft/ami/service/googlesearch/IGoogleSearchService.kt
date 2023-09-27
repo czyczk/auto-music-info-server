@@ -5,4 +5,11 @@ import com.zenasoft.ami.service.googlesearch.type.SearchEngineEnum
 
 interface IGoogleSearchService {
     suspend fun search(query: String, engineEnum: SearchEngineEnum): SearchResult
+
+    suspend fun searchIntegrated(
+        query: String,
+        mainEngineEnums: List<SearchEngineEnum>,
+        restEngineEnum: SearchEngineEnum?,
+    ): Map<SearchEngineEnum, SearchResult>
+
 }

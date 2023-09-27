@@ -16,6 +16,25 @@ class GoogleSearchController : KoinComponent {
 
     fun getRoutes(routing: Routing) {
         routing.route("/api/v1/google") {
+            get("/integrated") {
+                // Query all search engines and dedup.
+                // Get the query string from the request.
+                val (query, isOk) = checkAndExtractQuery(call)
+                if (!isOk) {
+                    return@get
+                }
+
+                val view = AmiControllerView.wrapSuspend {
+                    val searchResultMap = googleSearchService.searchIntegrated(
+                        query,
+                        // all the engines except for ENTIRE
+                        SearchEngineEnum.entries.filter { it != SearchEngineEnum.ENTIRE },
+                        SearchEngineEnum.ENTIRE,
+                    )
+                    searchResultMap
+                }
+                call.respond(view)
+            }
             get("/{engineId}") {
                 // Get the engine ID from the path.
                 val engineId = call.parameters["engineId"]!!.lowercase()
@@ -40,6 +59,16 @@ class GoogleSearchController : KoinComponent {
                 call.respond(view)
             }
         }
+    }
+
+    private suspend fun checkAndExtractQuery(call: ApplicationCall): Pair<String, Boolean> {
+        val query = call.request.queryParameters["query"] ?: ""
+        if (query.isBlank()) {
+            call.response.status(HttpStatusCode.BadRequest)
+            call.respondText("Please specify a query string.")
+            return Pair("", false)
+        }
+        return Pair(query, true)
     }
 
 }
