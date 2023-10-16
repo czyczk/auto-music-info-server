@@ -2,7 +2,7 @@ package com.zenasoft.ami.controller
 
 import com.zenasoft.ami.controller.model.AmiControllerView
 import com.zenasoft.ami.service.googlesearch.IGoogleSearchService
-import com.zenasoft.ami.service.googlesearch.type.SearchEngineEnum
+import com.zenasoft.ami.service.googlesearch.model.type.SearchEngineEnum
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*

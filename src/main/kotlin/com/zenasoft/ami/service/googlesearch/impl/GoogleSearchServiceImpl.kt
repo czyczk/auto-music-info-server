@@ -7,8 +7,8 @@ import com.zenasoft.ami.integration.googlesearch.IGoogleSearchClient
 import com.zenasoft.ami.service.googlesearch.IGoogleSearchService
 import com.zenasoft.ami.service.googlesearch.model.SearchResult
 import com.zenasoft.ami.service.googlesearch.model.SearchResultEntry
-import com.zenasoft.ami.service.googlesearch.type.SearchEngineEnum
-import com.zenasoft.ami.service.googlesearch.type.SearchProviderEnum
+import com.zenasoft.ami.service.googlesearch.model.type.SearchEngineEnum
+import com.zenasoft.ami.service.googlesearch.model.type.SearchProviderEnum
 import mu.KotlinLogging
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

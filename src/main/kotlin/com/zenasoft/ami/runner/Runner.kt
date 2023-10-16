@@ -3,6 +3,7 @@ package com.zenasoft.ami.runner
 import com.zenasoft.ami.common.AmiContext
 import com.zenasoft.ami.controller.ExpController
 import com.zenasoft.ami.controller.GoogleSearchController
+import com.zenasoft.ami.controller.TextCheckerController
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
@@ -24,6 +25,8 @@ class Runner {
 
         private val googleSearchController: GoogleSearchController by inject()
 
+        private val textCheckerController: TextCheckerController by inject()
+
         fun run(args: Array<String>) {
             embeddedServer(
                 CIO,
@@ -35,6 +38,7 @@ class Runner {
                 routing {
                     expController.getRoutes(this)
                     googleSearchController.getRoutes(this)
+                    textCheckerController.getRoutes(this)
                 }
             }.start(wait = true)
         }

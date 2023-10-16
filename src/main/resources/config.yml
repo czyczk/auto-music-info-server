@@ -8,3 +8,21 @@ external-service:
         entire: f18c2db8bf8be424d
         wikipedia: 9614938ae8c634af8
         music-platform: 30be9fbaf45414c67
+text-checker:
+  character-blacklist:
+    common:
+      - 'ｍ'
+    japanese:
+      - '·' # Most of the case, it should be '・'
+      - '~' # Most of the case, it should be '〜'
+    latin:
+    zh-hans:
+  # The ends of the ranges are inclusive.
+  range-blacklist:
+    common:
+      - start: 0xFF01
+        end: 0xFF5A
+    cyrillic:
+      - start: 0x0E3F
+    latin:
+      - start: 0x0250

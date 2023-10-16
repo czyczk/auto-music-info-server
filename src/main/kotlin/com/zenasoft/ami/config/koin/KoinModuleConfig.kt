@@ -14,12 +14,15 @@ import com.zenasoft.ami.config.appconfig.NetworkConfig
 import com.zenasoft.ami.config.appconfig.NetworkConfigUtil
 import com.zenasoft.ami.controller.ExpController
 import com.zenasoft.ami.controller.GoogleSearchController
+import com.zenasoft.ami.controller.TextCheckerController
 import com.zenasoft.ami.integration.googlesearch.IGoogleSearchClient
 import com.zenasoft.ami.integration.googlesearch.impl.GoogleSearchClientImpl
 import com.zenasoft.ami.service.googlesearch.IGoogleSearchService
 import com.zenasoft.ami.service.googlesearch.impl.GoogleSearchServiceImpl
 import com.zenasoft.ami.service.pagefetcher.IPageFetcherService
 import com.zenasoft.ami.service.pagefetcher.impl.PageFetcherServiceImpl
+import com.zenasoft.ami.service.textchecker.ITextCheckerService
+import com.zenasoft.ami.service.textchecker.impl.TextCheckerServiceImpl
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import okhttp3.ConnectionPool
@@ -76,12 +79,12 @@ class KoinModuleConfig {
                 // Service
                 single { PageFetcherServiceImpl() } bind IPageFetcherService::class
                 single { GoogleSearchServiceImpl() } bind IGoogleSearchService::class
+                single { TextCheckerServiceImpl() } bind ITextCheckerService::class
 
                 // Controller
                 single { ExpController() }
                 single { GoogleSearchController() }
-//                single { virtualRootEntry }
-//                single(named<VirtualRootEntry>()) { virtualRootEntry } bind IEntry::class
+                single { TextCheckerController() }
 
             }
 

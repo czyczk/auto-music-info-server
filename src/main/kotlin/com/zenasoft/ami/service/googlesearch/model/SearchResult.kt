@@ -1,7 +1,7 @@
 package com.zenasoft.ami.service.googlesearch.model
 
-import com.zenasoft.ami.service.googlesearch.type.SearchEngineEnum
-import com.zenasoft.ami.service.googlesearch.type.SearchProviderEnum
+import com.zenasoft.ami.service.googlesearch.model.type.SearchEngineEnum
+import com.zenasoft.ami.service.googlesearch.model.type.SearchProviderEnum
 import kotlinx.serialization.Serializable
 
 @Serializable

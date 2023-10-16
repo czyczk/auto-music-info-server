@@ -1,4 +1,4 @@
-package com.zenasoft.ami.service.googlesearch.type
+package com.zenasoft.ami.service.googlesearch.model.type
 
 enum class SearchEngineEnum(val engineId: String, val displayName: String) {
 

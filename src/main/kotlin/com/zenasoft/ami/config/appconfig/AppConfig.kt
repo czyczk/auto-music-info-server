@@ -9,4 +9,6 @@ class AppConfig {
 
     lateinit var externalService: ExternalServiceConfig
 
+    lateinit var textChecker: TextCheckerConfig
+
 }
