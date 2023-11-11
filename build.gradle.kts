@@ -2,7 +2,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
     kotlin("plugin.serialization") version ("1.6.0")
     application
     `java-library`
@@ -18,16 +18,16 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersion = "1.9.10"
+    val kotlinVersion = "1.9.20"
     val kotlinxCoroutinesVersion = "1.7.3"
     val kotlinxSerializationVersion = "1.6.0"
 
     val jasyptVersion = "1.9.3"
     val kamlVersion = "0.55.0"
-    val koinVersion = "3.4.3"
-    val ktorVersion = "2.3.4"
-    val yamlVersion = "2.15.2"
-    val okHttpVersion = "4.11.0"
+    val koinVersion = "3.5.0"
+    val ktorVersion = "2.3.6"
+    val yamlVersion = "2.15.3"
+    val okHttpVersion = "4.12.0"
 
     testImplementation(kotlin("test"))
 

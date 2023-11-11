@@ -11,7 +11,8 @@ class GoogleSearchOkResponse {
 
     lateinit var queries: Queries
 
-    lateinit var context: Context
+    // The context can be null if the search result is empty.
+    var context: Context? = null
 
     var spelling: Spelling? = null
 
