@@ -11,7 +11,7 @@ external-service:
 text-checker:
   character-blacklist:
     common:
-      - 'ｍ'
+      - ' ' # Most of the case, it should be ' '
     japanese:
       - '·' # Most of the case, it should be '・'
       - '~' # Most of the case, it should be '〜'
