@@ -7,4 +7,6 @@ class ExternalServiceConfig {
 
     lateinit var googleCustomSearch: GoogleCustomSearchConfig
 
+    lateinit var perplexityAi: PerplexityAiConfig
+
 }

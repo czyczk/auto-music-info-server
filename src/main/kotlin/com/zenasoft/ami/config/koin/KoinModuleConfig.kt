@@ -17,13 +17,20 @@ import com.zenasoft.ami.controller.GoogleSearchController
 import com.zenasoft.ami.controller.TextCheckerController
 import com.zenasoft.ami.integration.googlesearch.IGoogleSearchClient
 import com.zenasoft.ami.integration.googlesearch.impl.GoogleSearchClientImpl
+import com.zenasoft.ami.integration.perplexityapi.model.type.ModelEnum
+import com.zenasoft.ami.integration.perplexityapi.model.type.RoleEnum
+import com.zenasoft.ami.integration.perplexityapi.model.type.serializer.PerplexityApiModelEnumSerializer
+import com.zenasoft.ami.integration.perplexityapi.model.type.serializer.PerplexityApiRoleEnumSerializer
 import com.zenasoft.ami.service.googlesearch.IGoogleSearchService
 import com.zenasoft.ami.service.googlesearch.impl.GoogleSearchServiceImpl
 import com.zenasoft.ami.service.pagefetcher.IPageFetcherService
 import com.zenasoft.ami.service.pagefetcher.impl.PageFetcherServiceImpl
 import com.zenasoft.ami.service.textchecker.ITextCheckerService
 import com.zenasoft.ami.service.textchecker.impl.TextCheckerServiceImpl
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
+import kotlinx.serialization.modules.SerializersModule
 import mu.KotlinLogging
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
@@ -36,6 +43,7 @@ private val logger = KotlinLogging.logger { }
 
 class KoinModuleConfig {
     companion object {
+        @OptIn(ExperimentalSerializationApi::class)
         fun prepareInstanceModule(): org.koin.core.module.Module {
 
             // ObjectMapper
@@ -46,11 +54,23 @@ class KoinModuleConfig {
                 .setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE)
 
             // KSerializer objects. (The object mappers above can't be integrated with @Serializer in KSerializer.)
-            // JSON KSerializer
+            // General-purposed JSON KSerializer
             val jsonKSerializer = Json { ignoreUnknownKeys = true }
-            // Create a Yaml serializer with kebab-case naming strategy.
+            // General-purposed Yaml serializer with kebab-case naming strategy.
             val yamlKSerializerConfiguration = YamlConfiguration(yamlNamingStrategy = YamlNamingStrategy.KebabCase)
             val yamlKSerializer = Yaml(configuration = yamlKSerializerConfiguration)
+
+            // Perplexity API client: JSON KSerializer
+            // - Enable custom enum serializers
+            // - Snake-case naming strategy
+            val perplexityApiJsonKSerializerModule = SerializersModule {
+                contextual(ModelEnum::class, PerplexityApiModelEnumSerializer)
+                contextual(RoleEnum::class, PerplexityApiRoleEnumSerializer)
+            }
+            val perplexityApiJsonKSerializer = Json {
+                serializersModule = perplexityApiJsonKSerializerModule
+                namingStrategy = JsonNamingStrategy.SnakeCase
+            }
 
             // Load the app config
             val appConfig = AppConfigLoader.load(yamlKSerializer)
@@ -66,6 +86,8 @@ class KoinModuleConfig {
                 single(named("yamlObjectMapper")) { yamlObjectMapper }
                 single { jsonKSerializer }
                 single { yamlKSerializer }
+                single(named("perplexityApiJsonKSerializer")) { perplexityApiJsonKSerializer }
+
                 single { appConfig }
                 single {
                     // AmiContext
