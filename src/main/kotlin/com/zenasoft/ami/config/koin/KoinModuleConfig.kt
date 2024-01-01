@@ -14,19 +14,31 @@ import com.zenasoft.ami.config.appconfig.NetworkConfig
 import com.zenasoft.ami.config.appconfig.NetworkConfigUtil
 import com.zenasoft.ami.controller.ExpController
 import com.zenasoft.ami.controller.GoogleSearchController
+import com.zenasoft.ami.controller.InfoExtractorController
 import com.zenasoft.ami.controller.TextCheckerController
 import com.zenasoft.ami.integration.googlesearch.IGoogleSearchClient
 import com.zenasoft.ami.integration.googlesearch.impl.GoogleSearchClientImpl
+import com.zenasoft.ami.integration.perplexityapi.IPerplexityApiClient
+import com.zenasoft.ami.integration.perplexityapi.impl.PerplexityApiClientImpl
 import com.zenasoft.ami.integration.perplexityapi.model.type.ModelEnum
 import com.zenasoft.ami.integration.perplexityapi.model.type.RoleEnum
 import com.zenasoft.ami.integration.perplexityapi.model.type.serializer.PerplexityApiModelEnumSerializer
 import com.zenasoft.ami.integration.perplexityapi.model.type.serializer.PerplexityApiRoleEnumSerializer
 import com.zenasoft.ami.service.googlesearch.IGoogleSearchService
 import com.zenasoft.ami.service.googlesearch.impl.GoogleSearchServiceImpl
+import com.zenasoft.ami.service.infoextractor.IInfoExtractor
+import com.zenasoft.ami.service.infoextractor.impl.GeneralAiPoweredInfoExtractorImpl
+import com.zenasoft.ami.service.infoextractor.impl.InfoExtractorSelector
 import com.zenasoft.ami.service.pagefetcher.IPageFetcherService
 import com.zenasoft.ami.service.pagefetcher.impl.PageFetcherServiceImpl
 import com.zenasoft.ami.service.textchecker.ITextCheckerService
 import com.zenasoft.ami.service.textchecker.impl.TextCheckerServiceImpl
+import io.ktor.client.*
+import io.ktor.client.engine.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
@@ -55,7 +67,9 @@ class KoinModuleConfig {
 
             // KSerializer objects. (The object mappers above can't be integrated with @Serializer in KSerializer.)
             // General-purposed JSON KSerializer
-            val jsonKSerializer = Json { ignoreUnknownKeys = true }
+            val jsonKSerializer = Json {
+                ignoreUnknownKeys = true
+            }
             // General-purposed Yaml serializer with kebab-case naming strategy.
             val yamlKSerializerConfiguration = YamlConfiguration(yamlNamingStrategy = YamlNamingStrategy.KebabCase)
             val yamlKSerializer = Yaml(configuration = yamlKSerializerConfiguration)
@@ -78,6 +92,9 @@ class KoinModuleConfig {
 
             // OkHttpClient
             val okHttpClient = createOkHttpClient(appConfig.network)
+            // KtorClient
+            val perplexityApiKtorClient =
+                createPerplexityApiKtorClient(appConfig.network, appConfig.externalService.perplexityAi.apiKey)
 
             // Construct a module
             val instanceModule = module {
@@ -94,18 +111,23 @@ class KoinModuleConfig {
                     AmiContext(get())
                 }
                 single { okHttpClient }
+                single(named("perplexityApiKtorClient")) { perplexityApiKtorClient }
 
                 // Integration
                 single { GoogleSearchClientImpl() } bind IGoogleSearchClient::class
+                single { PerplexityApiClientImpl() } bind IPerplexityApiClient::class
 
                 // Service
-                single { PageFetcherServiceImpl() } bind IPageFetcherService::class
                 single { GoogleSearchServiceImpl() } bind IGoogleSearchService::class
+                single { PageFetcherServiceImpl() } bind IPageFetcherService::class
+                single(named("generalAiPoweredInfoExtractor")) { GeneralAiPoweredInfoExtractorImpl() } bind IInfoExtractor::class
+                single(named("infoExtractorSelector")) { InfoExtractorSelector() } bind IInfoExtractor::class
                 single { TextCheckerServiceImpl() } bind ITextCheckerService::class
 
                 // Controller
                 single { ExpController() }
                 single { GoogleSearchController() }
+                single { InfoExtractorController() }
                 single { TextCheckerController() }
 
             }
@@ -114,8 +136,9 @@ class KoinModuleConfig {
         }
 
         private fun createOkHttpClient(networkConfig: NetworkConfig): OkHttpClient {
-            val proxy = networkConfig.proxyUrl?.let {
-                NetworkConfigUtil.createProxyFromUrl(it)
+            val proxy = networkConfig.proxyHost?.let {
+                val url = "${networkConfig.proxyProtocol!!}://$it:${networkConfig.proxyPort!!}"
+                NetworkConfigUtil.createProxyFromUrl(url)
             }
             val okHttpClientBuilder = OkHttpClient.Builder()
             val okHttpConnectionPool = ConnectionPool(20, 5, TimeUnit.MINUTES)
@@ -124,6 +147,41 @@ class KoinModuleConfig {
                 okHttpClientBuilder.proxy(it)
             }
             return okHttpClientBuilder.build()
+        }
+
+        private fun createPerplexityApiKtorClient(networkConfig: NetworkConfig, apiKey: String): HttpClient {
+            val client = HttpClient(CIO) {
+                install(HttpTimeout) {
+                    connectTimeoutMillis = 10_000
+                    requestTimeoutMillis = 10_000
+                }
+                install(Auth) {
+                    bearer {
+                        loadTokens {
+                            BearerTokens(apiKey, "")
+                        }
+                    }
+                }
+                engine {
+                    proxy = networkConfig.proxyHost?.let {
+                        when (networkConfig.proxyProtocol) {
+                            "http" -> {
+                                val url = "$it:${networkConfig.proxyPort!!}"
+                                ProxyBuilder.http(url)
+                            }
+
+                            "socks5" -> {
+                                ProxyBuilder.socks(it, networkConfig.proxyPort!!)
+                            }
+
+                            else -> {
+                                throw IllegalArgumentException("Unsupported proxy protocol: ${networkConfig.proxyProtocol}")
+                            }
+                        }
+                    }
+                }
+            }
+            return client
         }
     }
 }

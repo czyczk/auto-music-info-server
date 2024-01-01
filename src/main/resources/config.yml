@@ -1,6 +1,8 @@
 network:
   port: 8080
-  proxy-url: socks5://127.0.0.1:7890
+  proxy-protocol: socks5
+  proxy-host: 127.0.0.1
+  proxy-port: 7890
 external-service:
   google-custom-search:
     api-key: ENC(4NENKkiWYYSEU5dRO+O/jBjgoCTkcjgBZtZ1ce5V/pAd7V7zRjzXVnavoIQvNko+)

@@ -24,8 +24,8 @@ class AmiControllerView<T> {
             return view
         }
 
-        fun <T> ofError(error: Exception): AmiControllerView<T> {
-            val view = AmiControllerView<T>()
+        fun <Void> ofError(error: Exception): AmiControllerView<Void> {
+            val view = AmiControllerView<Void>()
             if (error is AmiException) {
                 view.error = error
             } else {

@@ -1,7 +1,9 @@
 package com.zenasoft.ami.service.infoextractor.model
 
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 
+@Serializable
 class MusicInfo {
 
     /**
@@ -25,10 +27,16 @@ class MusicInfo {
      */
     var date: LocalDate? = null
 
+    var genre: String? = null
+
+    var trackNo: Int? = null
+
     var composer: String? = null
 
     var lyricist: String? = null
 
     var arranger: String? = null
+
+    var confidence: String? = null
 
 }

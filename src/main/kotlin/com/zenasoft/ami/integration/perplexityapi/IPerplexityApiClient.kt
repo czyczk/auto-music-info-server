@@ -5,6 +5,6 @@ import com.zenasoft.ami.integration.perplexityapi.model.Response
 
 interface IPerplexityApiClient {
 
-    suspend fun getCompletion(request: Request, apiKey: String): Response
+    suspend fun getCompletion(request: Request): Response
 
 }

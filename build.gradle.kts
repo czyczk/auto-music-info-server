@@ -18,15 +18,15 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersion = "1.9.20"
+    val kotlinVersion = "1.9.21"
     val kotlinxCoroutinesVersion = "1.7.3"
-    val kotlinxSerializationVersion = "1.6.0"
+    val kotlinxSerializationVersion = "1.6.2"
 
     val jasyptVersion = "1.9.3"
-    val kamlVersion = "0.55.0"
+    val kamlVersion = "0.56.0"
     val koinVersion = "3.5.0"
-    val ktorVersion = "2.3.6"
-    val yamlVersion = "2.15.3"
+    val ktorVersion = "2.3.7"
+    val yamlVersion = "2.16.0"
     val okHttpVersion = "4.12.0"
 
     testImplementation(kotlin("test"))
@@ -36,11 +36,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlinxCoroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${kotlinxSerializationVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+
 
     // Logging
     // Don't use janino because it will cause the "Error: Could not find or load main class MainKt" error in the fatJar.
     implementation("io.github.microutils:kotlin-logging:3.0.5")
-    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
 
     // Dependency injection
     implementation("io.insert-koin:koin-core:${koinVersion}")
@@ -57,7 +59,13 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:${ktorVersion}")
     implementation("io.ktor:ktor-server-content-negotiation:${ktorVersion}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
-    implementation("io.netty:netty-all:4.1.98.Final")
+    implementation("io.ktor:ktor-client-core:${ktorVersion}")
+    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+    implementation("io.ktor:ktor-client-auth:${ktorVersion}")
+    implementation("io.ktor:ktor-client-content-negotiation:${ktorVersion}")
+
+//    implementation("io.netty:netty-all:4.1.98.Final")
+
 
     // OkHttp
     implementation("com.squareup.okhttp3:okhttp:${okHttpVersion}")
@@ -68,8 +76,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${yamlVersion}")
 
     // Selenium
-    implementation("org.seleniumhq.selenium:selenium-java:4.5.0")
-    implementation("org.seleniumhq.selenium:selenium-edge-driver:4.5.0")
+//    implementation("org.seleniumhq.selenium:selenium-java:4.5.0")
+//    implementation("org.seleniumhq.selenium:selenium-edge-driver:4.5.0")
 }
 
 tasks.test {
