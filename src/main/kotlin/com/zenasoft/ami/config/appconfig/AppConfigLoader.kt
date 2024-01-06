@@ -10,6 +10,7 @@ class AppConfigLoader {
 
     companion object {
         private val configPath = "/config.yml"
+        private val utConfigPath = "/config-ut.yml"
         private val alternativeConfigPath = System.getProperty("user.home") + "/.config/ami-server/config.yml";
 
         fun load(yamlObjectMapper: ObjectMapper): AppConfig {
@@ -33,7 +34,12 @@ class AppConfigLoader {
             }
         }
 
-        fun load(yamlKSerializer: Yaml): AppConfig {
+        fun load(envProfile: String, yamlKSerializer: Yaml): AppConfig {
+            val configPath = when (envProfile) {
+                "prod" -> configPath
+                "ut" -> utConfigPath
+                else -> throw IllegalArgumentException("Invalid envProfile: $envProfile")
+            }
             var configIs = AppConfigLoader::class.java.getResourceAsStream(configPath);
             if (configIs == null) {
                 // Check if the alternative config path exists.

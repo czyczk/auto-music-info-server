@@ -24,9 +24,9 @@ dependencies {
 
     val jasyptVersion = "1.9.3"
     val kamlVersion = "0.56.0"
-    val koinVersion = "3.5.0"
+    val koinVersion = "3.5.3"
     val ktorVersion = "2.3.7"
-    val yamlVersion = "2.16.0"
+    val yamlVersion = "2.16.1"
     val okHttpVersion = "4.12.0"
 
     testImplementation(kotlin("test"))
@@ -38,7 +38,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${kotlinxSerializationVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
 
-
     // Logging
     // Don't use janino because it will cause the "Error: Could not find or load main class MainKt" error in the fatJar.
     implementation("io.github.microutils:kotlin-logging:3.0.5")
@@ -46,6 +45,7 @@ dependencies {
 
     // Dependency injection
     implementation("io.insert-koin:koin-core:${koinVersion}")
+    testImplementation("io.insert-koin:koin-test:${koinVersion}")
 
     // Jasypt
     implementation("org.jasypt:jasypt:${jasyptVersion}")
@@ -78,6 +78,15 @@ dependencies {
     // Selenium
 //    implementation("org.seleniumhq.selenium:selenium-java:4.5.0")
 //    implementation("org.seleniumhq.selenium:selenium-edge-driver:4.5.0")
+}
+
+configurations {
+    all {
+        resolutionStrategy {
+            // Exclude the conflicting junit modules
+            force("org.jetbrains.kotlin:kotlin-test-junit5:1.9.21")
+        }
+    }
 }
 
 tasks.test {

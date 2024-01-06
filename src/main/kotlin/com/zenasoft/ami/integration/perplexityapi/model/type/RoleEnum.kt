@@ -1,8 +1,5 @@
 package com.zenasoft.ami.integration.perplexityapi.model.type
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 enum class RoleEnum(val apiCode: String) {
 
     SYSTEM("system"),

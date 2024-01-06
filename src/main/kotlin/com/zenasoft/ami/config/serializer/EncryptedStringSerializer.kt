@@ -10,16 +10,16 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 
 object EncryptedStringSerializer : KSerializer<String> {
 
-    private val secretKey = System.getenv("ENCRYPTION_SECRET_KEY")
+    private val secretKey by lazy {
+        val sk = System.getProperty("app.encryption-secret-key")
+            ?: throw IllegalStateException("JVM property `app.encryption-secret-key` is not set")
+        sk
+    }
 
-    private val encryptor = StandardPBEStringEncryptor()
-
-    init {
-        if (secretKey == null) {
-            throw IllegalStateException("Env var `ENCRYPTION_SECRET_KEY` is not set")
+    private val encryptor by lazy {
+        StandardPBEStringEncryptor().also {
+            it.setPassword(secretKey)
         }
-
-        encryptor.setPassword(secretKey)
     }
 
     override fun serialize(encoder: Encoder, value: String) {

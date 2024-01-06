@@ -1,13 +1,12 @@
 package com.zenasoft.ami.integration.perplexityapi.model
 
 import com.zenasoft.ami.integration.perplexityapi.model.type.RoleEnum
-import kotlinx.serialization.Serializable
 
-@Serializable
-class Message {
-
-    lateinit var role: RoleEnum
-
-    lateinit var content: String
-
+data class Message(
+    var role: RoleEnum,
+    var content: String
+) {
+    companion object {
+        // Make extensions possible.
+    }
 }

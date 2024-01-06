@@ -27,8 +27,11 @@ class InfoExtractorController : KoinComponent {
                     return@post
                 }
 
-                val musicInfo = infoExtractor.extractMusicInfo(params.url, params.query)
-                call.respond(AmiControllerView.ofOk(musicInfo))
+                val view = AmiControllerView.wrapSuspend {
+                    val musicInfo = infoExtractor.extractMusicInfo(params.url, params.query)
+                    musicInfo
+                }
+                call.respond(view)
             }
         }
     }

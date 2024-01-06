@@ -1,8 +1,5 @@
 package com.zenasoft.ami.integration.perplexityapi.model.type
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 enum class ModelEnum(val apiCode: String) {
 
     /*

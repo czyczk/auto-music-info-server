@@ -1,22 +1,18 @@
 package com.zenasoft.ami.integration.perplexityapi.model
 
 import com.zenasoft.ami.integration.perplexityapi.model.type.ModelEnum
-import kotlinx.serialization.Serializable
-import kotlin.properties.Delegates
 
-@Serializable
-class Response {
+data class Response(
+    var id: String,
+    var model: ModelEnum,
+    var `object`: String,
+    var created: Long,
+    var usage: ResponseUsage,
+    var choices: List<ResponseChoice>,
+) {
 
-    lateinit var id: String
-
-    lateinit var model: ModelEnum
-
-    lateinit var `object`: String
-
-    var created by Delegates.notNull<Long>()
-
-    lateinit var usage: ResponseUsage
-
-    lateinit var choices: List<ResponseChoice>
+    companion object {
+        // Make extensions possible.
+    }
 
 }

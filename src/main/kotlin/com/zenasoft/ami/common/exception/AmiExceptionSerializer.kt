@@ -32,7 +32,7 @@ object AmiExceptionSerializer : KSerializer<AmiException> {
                     else -> break
                 }
             }
-            AmiException(AmiErrorCode.valueOf(errorCode!!), message!!)
+            AmiException.of(AmiErrorCode.valueOf(errorCode!!), message!!)
         }
     }
 }

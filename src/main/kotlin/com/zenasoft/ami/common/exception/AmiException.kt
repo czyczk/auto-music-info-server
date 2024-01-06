@@ -7,10 +7,11 @@ import kotlinx.serialization.Transient
 
 @Serializable(with = AmiExceptionSerializer::class)
 class AmiException(
+    cause: Throwable?,
     val code: AmiErrorCode,
     @Transient
     vararg val params: String = emptyArray(),
-) : RuntimeException() {
+) : RuntimeException(cause) {
 
     @OptIn(ExperimentalSerializationApi::class)
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)
@@ -19,7 +20,11 @@ class AmiException(
 
     companion object {
         fun of(errorCode: AmiErrorCode, vararg params: String): AmiException {
-            return AmiException(errorCode, *params)
+            return AmiException(null, errorCode, *params)
+        }
+
+        fun of(cause: Throwable, errorCode: AmiErrorCode, vararg params: String): AmiException {
+            return AmiException(cause, errorCode, *params)
         }
     }
 

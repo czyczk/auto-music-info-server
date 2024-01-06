@@ -1,27 +1,31 @@
 package com.zenasoft.ami.controller
 
+import com.zenasoft.ami.common.exception.AmiErrorCode
+import com.zenasoft.ami.common.exception.AmiException
 import com.zenasoft.ami.controller.model.AmiControllerView
+import com.zenasoft.ami.controller.model.IntegratedSearchRequest
 import com.zenasoft.ami.service.googlesearch.IGoogleSearchService
 import com.zenasoft.ami.service.googlesearch.model.type.SearchEngineEnum
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class GoogleSearchController : KoinComponent {
+class SearchController : KoinComponent {
 
     private val googleSearchService: IGoogleSearchService by inject()
 
     fun getRoutes(routing: Routing) {
-        routing.route("/api/v1/google") {
-            get("/integrated") {
+        routing.route("/api/v1/search") {
+            post("/integrated") {
                 // Query all search engines and dedup.
                 // Get the query string from the request.
                 val (query, isOk) = checkAndExtractQuery(call)
                 if (!isOk) {
-                    return@get
+                    return@post
                 }
 
                 val view = AmiControllerView.wrapSuspend {
@@ -35,21 +39,36 @@ class GoogleSearchController : KoinComponent {
                 }
                 call.respond(view)
             }
-            get("/{engineId}") {
+            post("/google/{engineId}") {
                 // Get the engine ID from the path.
                 val engineId = call.parameters["engineId"]!!.lowercase()
                 val engineEnum = SearchEngineEnum.entries.find { it.engineId == engineId }
                 if (engineEnum == null) {
-                    call.response.status(HttpStatusCode.NotFound)
-                    return@get
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        AmiControllerView.ofError<Void>(
+                            AmiException.of(
+                                AmiErrorCode.AMI_C001_002,
+                                "The specified engine does not exist.",
+                            ),
+                        ),
+                    )
+                    return@post
                 }
 
                 // Get the query string from the request.
                 val query = call.request.queryParameters["query"] ?: ""
                 if (query.isBlank()) {
-                    call.response.status(HttpStatusCode.BadRequest)
-                    call.respondText("Please specify a query string.")
-                    return@get
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        AmiControllerView.ofError<Void>(
+                            AmiException.of(
+                                AmiErrorCode.AMI_C001_001,
+                                "Please specify a query string.",
+                            ),
+                        ),
+                    )
+                    return@post
                 }
 
                 val view = AmiControllerView.wrapSuspend {
@@ -62,13 +81,21 @@ class GoogleSearchController : KoinComponent {
     }
 
     private suspend fun checkAndExtractQuery(call: ApplicationCall): Pair<String, Boolean> {
-        val query = call.request.queryParameters["query"] ?: ""
-        if (query.isBlank()) {
+        val request = call.receive<IntegratedSearchRequest>()
+        if (request.query.isBlank()) {
             call.response.status(HttpStatusCode.BadRequest)
-            call.respondText("Please specify a query string.")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                AmiControllerView.ofError<Void>(
+                    AmiException.of(
+                        AmiErrorCode.AMI_C001_001,
+                        "Please specify a query string.",
+                    ),
+                ),
+            )
             return Pair("", false)
         }
-        return Pair(query, true)
+        return Pair(request.query, true)
     }
 
 }
