@@ -88,7 +88,7 @@ class GoogleSearchClientImpl : KoinComponent, IGoogleSearchClient {
             }
 
             if (response.code == 400) {
-                val responseBody = response.body!!.string() ?: ""
+                val responseBody = response.body?.string() ?: ""
                 val errorResponse = jsonKSerializer.decodeFromString(
                     GoogleSearchErrorResponse.serializer(),
                     responseBody,

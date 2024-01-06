@@ -26,7 +26,7 @@ object AmiExceptionSerializer : KSerializer<AmiException> {
             var errorCode: String? = null
             var message: String? = null
             while (true) {
-                when (val index = decodeElementIndex(descriptor)) {
+                when (decodeElementIndex(descriptor)) {
                     0 -> errorCode = decodeStringElement(descriptor, 0)
                     1 -> message = decodeStringElement(descriptor, 1)
                     else -> break
