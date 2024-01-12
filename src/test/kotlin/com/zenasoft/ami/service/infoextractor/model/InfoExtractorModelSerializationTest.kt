@@ -26,15 +26,15 @@ class InfoExtractorModelSerializationTest : TestBase() {
   "confidence": "LOW"
 }"""
             val musicInfo = json.decodeFromString(MusicInfo.serializer(), jsonStr)
-            Assertions.assertEquals("Adele", musicInfo.artist)
+            Assertions.assertEquals("Adele", musicInfo.artists)
             Assertions.assertEquals("Someone Like You", musicInfo.title)
             Assertions.assertEquals("21", musicInfo.album)
             Assertions.assertEquals("2011-02-04", musicInfo.date)
             Assertions.assertEquals("Pop", musicInfo.genre)
             Assertions.assertEquals(2, musicInfo.trackNo)
-            Assertions.assertEquals("Adele", musicInfo.composer)
-            Assertions.assertEquals("Adele", musicInfo.lyricist)
-            Assertions.assertEquals("Adele", musicInfo.arranger)
+            Assertions.assertEquals("Adele", musicInfo.composers)
+            Assertions.assertEquals("Adele", musicInfo.lyricists)
+            Assertions.assertEquals("Adele", musicInfo.arrangers)
             Assertions.assertEquals("LOW", musicInfo.confidence)
         }
 

@@ -16,15 +16,15 @@ data class MusicInfoWithRequest(
 
     var musicInfo: MusicInfo,
 ) : MusicInfo(
-    artist = musicInfo.artist,
+    artists = musicInfo.artists,
     title = musicInfo.title,
     album = musicInfo.album,
     date = musicInfo.date,
     genre = musicInfo.genre,
     trackNo = musicInfo.trackNo,
-    composer = musicInfo.composer,
-    lyricist = musicInfo.lyricist,
-    arranger = musicInfo.arranger,
+    composers = musicInfo.composers,
+    lyricists = musicInfo.lyricists,
+    arrangers = musicInfo.arrangers,
     confidence = musicInfo.confidence,
     lowConfidenceReason = musicInfo.lowConfidenceReason,
 ) {

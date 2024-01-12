@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 open class MusicInfo(
-    var artist: List<String>,
+    var artists: List<String>,
     var title: String,
     var album: String? = null,
 
@@ -15,9 +15,9 @@ open class MusicInfo(
 
     var genre: String? = null,
     var trackNo: Int? = null,
-    var composer: List<String>? = null,
-    var lyricist: List<String>? = null,
-    var arranger: List<String>? = null,
+    var composers: List<String>? = null,
+    var lyricists: List<String>? = null,
+    var arrangers: List<String>? = null,
     var confidence: String? = null,
     var lowConfidenceReason: String? = null,
 ) {
