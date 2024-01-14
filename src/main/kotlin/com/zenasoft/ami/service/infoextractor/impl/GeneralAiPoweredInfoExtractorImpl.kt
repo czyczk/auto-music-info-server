@@ -11,6 +11,7 @@ import com.zenasoft.ami.integration.perplexityapi.model.type.RoleEnum
 import com.zenasoft.ami.service.infoextractor.AbstractAiPoweredInfoExtractor
 import com.zenasoft.ami.service.infoextractor.model.MusicInfo
 import com.zenasoft.ami.service.infoextractor.model.MusicInfoWithRequest
+import com.zenasoft.ami.service.infoextractor.model.type.MusicInfoSourceEnum
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import org.koin.core.component.KoinComponent
@@ -54,7 +55,7 @@ class GeneralAiPoweredInfoExtractorImpl : KoinComponent, AbstractAiPoweredInfoEx
 
         try {
             val musicInfo = jsonKSerializer.decodeFromString(MusicInfo.serializer(), musicInfoJson)
-            return MusicInfoWithRequest(url, query, musicInfo)
+            return MusicInfoWithRequest(url, query, MusicInfoSourceEnum.AI, musicInfo)
         } catch (e: Exception) {
             throw AmiException.of(e, AmiErrorCode.AMI_S002_002, "originalContent: $originalContent")
         }

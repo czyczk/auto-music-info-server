@@ -1,5 +1,6 @@
 package com.zenasoft.ami.service.infoextractor.model
 
+import com.zenasoft.ami.service.infoextractor.model.type.MusicInfoSourceEnum
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,6 +14,8 @@ data class MusicInfoWithRequest(
      * The query. Usually contains the artist and the title.
      */
     var query: String,
+
+    var source: MusicInfoSourceEnum,
 
     var musicInfo: MusicInfo,
 ) : MusicInfo(
